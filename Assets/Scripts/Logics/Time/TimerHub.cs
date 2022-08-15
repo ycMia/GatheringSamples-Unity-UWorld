@@ -61,6 +61,12 @@ namespace MyScripts.Logics.Time
             return false;
         }
 
+        public float GetAClock(string clockName)
+        {
+            //You might want to check this logic twice. I'm serious.
+            return _timeDictionary[clockName] + UnityEngine.Time.deltaTime;
+        }
+
         private void Update()
         {
             //can't use foreach, this method contains Remove() method.
