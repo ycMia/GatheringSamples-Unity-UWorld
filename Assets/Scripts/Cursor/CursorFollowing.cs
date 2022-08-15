@@ -1,27 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-namespace Assets.Scripts.Cursor
+namespace MyScripts.Scripts.CursorControl
 {
     class CursorFollowing : MonoBehaviour
     {
-        private GameObject mousePrefab;
-        public GameObject mouseGameObject;
+        [SerializeField] private GameObject cursorPrefab;
+        private GameObject cursorGO;
+
+        private Animator animator;
+
         private void Awake()
         {
-            mouseGameObject = Instantiate(mousePrefab);
+            Cursor.visible = false;
+            cursorGO = Instantiate(cursorPrefab);
+            cursorGO.name = "CursorGameObject";
+
+            animator = cursorGO.GetComponent<Animator>();
         }
 
-        private void SetParaments()
+        void Update()
         {
+            cursorGO.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0,0,10f);
 
-        }
+            animator.SetBool("Hold", Input.GetKey(KeyCode.Mouse0));
 
-        private void Update()
-        {
-            if(Input.GetKeyDown(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
             {
-                //This commit is set for testing the changings in code... not actually in used by us
+
             }
         }
     }

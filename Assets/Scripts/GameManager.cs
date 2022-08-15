@@ -8,11 +8,12 @@ public class GameManager : SimpleMessageSender
     // Start is called before the first frame update
     void Start()
     {
-        SendMessageToCortex("This message have been seized");
-        foreach(SimpleMessage sme in SimpleMessageCortexDefault.Instance.Data())
-        {
-            print(sme.info);
-        }
+        //SendMessageToCortex("This message have been seized");
+        //foreach(SimpleMessage sme in SimpleMessageCortexDefault.Instance.Data())
+        //{
+        //    print(sme.info);
+        //}
+
     }
 
     // Update is called once per frame
