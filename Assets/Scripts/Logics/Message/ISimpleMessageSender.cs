@@ -5,21 +5,21 @@ using UnityEditor;
 
 namespace MyScripts.Logics.Message
 {
-    public interface ISimpleMessageSender
+    public interface ISimpleMessageSender<T>
     {
-        void SendMessageToCortex(string message);
-        void SendMessage(string message, List<SimpleMessage> target);
+        void SendMessageToCortex(T message);
+        void SendMessage(T message, List<SimpleMessage<T>> target);
     }
-    public abstract class SimpleMessageSender : MonoBehaviour, ISimpleMessageSender
+    public abstract class SimpleMessageSender<T> : MonoBehaviour, ISimpleMessageSender<T>
     {
-        public virtual void SendMessageToCortex(string message)
+        public virtual void SendMessageToCortex(T message)
         {
-            SendMessage(message,SimpleMessageCortexDefault.Instance.GetReceiver());
+            SendMessage(message,SimpleMessageCortexDefault<T>.Instance.GetMsgReceiver());
         }
 
-        public virtual void SendMessage(string message, List<SimpleMessage> target)
+        public virtual void SendMessage(T message, List<SimpleMessage<T>> target)
         {
-            target.Add(new SimpleMessage(message));
+            target.Add(new SimpleMessage<T>(message));
         }
     }
 }

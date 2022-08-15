@@ -12,7 +12,6 @@ namespace MyScripts.Logics
         
         }
 
-
         // Update is called once per frame
         void Update()
         {

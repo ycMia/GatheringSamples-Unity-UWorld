@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyScripts.Logics.Message
 {
-    public interface ISimpleMessageReceiver
+    public interface ISimpleMessageReceiver<T>
     {
-        List<SimpleMessage> GetReceiver();
-        List<SimpleMessage> Data();
+        List<SimpleMessage<T>> GetMsgReceiver();
+        List<SimpleMessage<T>> MsgData();
     }
 }
