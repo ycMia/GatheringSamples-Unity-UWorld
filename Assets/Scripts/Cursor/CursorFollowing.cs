@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using MyScripts.Logics.Time;
-using MyScripts.Logics.StatusMachine;
+using MyScripts.Logics.StateMachine;
 
 namespace MyScripts.Scripts.CursorControl
 {
@@ -10,7 +10,7 @@ namespace MyScripts.Scripts.CursorControl
         [SerializeField] private GameObject cursorPrefab;
         private GameObject cursorGO;
         private Animator animator;
-        private CursorClickStatusMachine statusMachine = new CursorClickStatusMachine();
+        private CursorClickStateMachine stateMachine = new CursorClickStateMachine();
         private void Awake()
         {
             Cursor.visible = false;
@@ -19,7 +19,7 @@ namespace MyScripts.Scripts.CursorControl
 
             animator = cursorGO.GetComponent<Animator>();
 
-            print(statusMachine.GetStatus());//
+            print(stateMachine.GetState());//
         }
 
         void Update()
@@ -35,33 +35,33 @@ namespace MyScripts.Scripts.CursorControl
         }
     }
 
-    class CursorClickStatusMachine : IStatusMachine<CursorClickStatusMachine.ECursorStatus>
+    class CursorClickStateMachine : IStateMachine<CursorClickStateMachine.ECursorState>
     {
-        private List<CursorStatusNode> _statusList;
-        private CursorStatusNode _currentNode = new CursorStatusNode(ECursorStatus.Normal);
-        public CursorClickStatusMachine()
+        private List<CursorStateNode> _stateList;
+        private CursorStateNode _currentNode = new CursorStateNode(ECursorState.Normal);
+        public CursorClickStateMachine()
         {
-            _statusList = new List<CursorStatusNode>()
+            _stateList = new List<CursorStateNode>()
             {
                 _currentNode,
-                new CursorStatusNode(ECursorStatus.Click),
-                new CursorStatusNode(ECursorStatus.DoubleClick),
-                new CursorStatusNode(ECursorStatus.Hold)
+                new CursorStateNode(ECursorState.Click),
+                new CursorStateNode(ECursorState.DoubleClick),
+                new CursorStateNode(ECursorState.Hold)
             };
 
-            _statusList.ForEach(delegate (CursorStatusNode cs) { cs.MakeLinkInList(_statusList); });
+            _stateList.ForEach(delegate (CursorStateNode cs) { cs.MakeLinkInList(_stateList); });
         }
 
-        public ECursorStatus GetStatus()
+        public ECursorState GetState()
         {
             return _currentNode.data;
         }
 
-        public void TrySwitchToStatus(ECursorStatus status)
+        public void TrySwitchToState(ECursorState state)
         {
-            foreach(CursorStatusNode node in _currentNode.reachable)
+            foreach(CursorStateNode node in _currentNode.reachable)
             {
-                if (node.data == status)
+                if (node.data == state)
                 {
                     _currentNode = node;
                 }
@@ -70,7 +70,7 @@ namespace MyScripts.Scripts.CursorControl
         }
 
         //----------//
-        public enum ECursorStatus
+        public enum ECursorState
         {
             Normal,
             Click,
@@ -78,32 +78,32 @@ namespace MyScripts.Scripts.CursorControl
             Hold,
         }
 
-        public class CursorStatusNode
+        public class CursorStateNode
         {
-            public CursorStatusNode(ECursorStatus data) => this.data = data;
+            public CursorStateNode(ECursorState data) => this.data = data;
 
-            //Assemble contains reachable Status
-            public List<CursorStatusNode> reachable = new();
+            //Assemble contains reachable State
+            public List<CursorStateNode> reachable = new();
             //What am I
-            public ECursorStatus data;
+            public ECursorState data;
 
-            public void MakeLinkInList(List<CursorStatusNode> list)
+            public void MakeLinkInList(List<CursorStateNode> list)
             {
-                if (data == ECursorStatus.Normal)
-                    foreach (CursorStatusNode cs in list)
-                        if (cs.data == ECursorStatus.Click || cs.data == ECursorStatus.Hold)
+                if (data == ECursorState.Normal)
+                    foreach (CursorStateNode cs in list)
+                        if (cs.data == ECursorState.Click || cs.data == ECursorState.Hold)
                             reachable.Add(cs);
-                if (data == ECursorStatus.Click)
-                    foreach (CursorStatusNode cs in list)
-                        if (cs.data == ECursorStatus.DoubleClick || cs.data == ECursorStatus.Normal)
+                if (data == ECursorState.Click)
+                    foreach (CursorStateNode cs in list)
+                        if (cs.data == ECursorState.DoubleClick || cs.data == ECursorState.Normal)
                             reachable.Add(cs);
-                if (data == ECursorStatus.DoubleClick)
-                    foreach (CursorStatusNode cs in list)
-                        if (cs.data == ECursorStatus.Normal)
+                if (data == ECursorState.DoubleClick)
+                    foreach (CursorStateNode cs in list)
+                        if (cs.data == ECursorState.Normal)
                             reachable.Add(cs);
-                if (data == ECursorStatus.Hold)
-                    foreach (CursorStatusNode cs in list)
-                        if (cs.data == ECursorStatus.Normal)
+                if (data == ECursorState.Hold)
+                    foreach (CursorStateNode cs in list)
+                        if (cs.data == ECursorState.Normal)
                             reachable.Add(cs);
                 //[Info] Damn, the machine is such a thing worth to pay. --ycMia
             }

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MyScripts.Logics.StatusMachine
+namespace MyScripts.Logics.StateMachine
 {
-    internal interface IStatusMachine<T>
+    internal interface IStateMachine<T>
     {
-        void TrySwitchToStatus(T status);
-        T GetStatus();
+        void TrySwitchToState(T status);
+        T GetState();
     }
 }
