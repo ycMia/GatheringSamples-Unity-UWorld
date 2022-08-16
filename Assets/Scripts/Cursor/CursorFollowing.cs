@@ -10,33 +10,90 @@ namespace MyScripts.Scripts.CursorControl
         [SerializeField] private GameObject cursorPrefab;
         private GameObject cursorGO;
         private Animator animator;
-        private CursorClickStateMachine stateMachine = new CursorClickStateMachine();
+        private CursorClickStateMachine _stateMachine = new CursorClickStateMachine();
+        public IStateMachine<ECursorState> StateMachine { get => _stateMachine; }
+
+        [SerializeField, Range(0.04f, 1f)] private float _gapOfCursorClick;
+
         private void Awake()
         {
+            //You Don't want to see that WindowsWhiteHead do you (lol)
             Cursor.visible = false;
             cursorGO = Instantiate(cursorPrefab);
             cursorGO.name = "CursorGameObject";
 
             animator = cursorGO.GetComponent<Animator>();
-
-            print(stateMachine.GetState());//
         }
 
         void Update()
         {
             cursorGO.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0,0,10f);
+            //animator.SetBool("Hold", Input.GetKey(KeyCode.Mouse0));
 
-            animator.SetBool("Hold", Input.GetKey(KeyCode.Mouse0));
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            float timeGap; //will be given a value in each case tag.
+            switch (StateMachine.GetState())
             {
-                
+                case ECursorState.Normal:
+                    timeGap = TimerHub.Instance.GetAClock("CursorClickJudge");
+                    if (Input.GetKeyDown(KeyCode.Mouse0) && timeGap<0f)
+                    {
+                        TimerHub.Instance.AddClockRent("CursorClickJudge");
+                    }
+                    else if(Input.GetKeyUp(KeyCode.Mouse0) && timeGap>0f && timeGap < _gapOfCursorClick)
+                    {
+                        StateMachine.TrySwitchToState(ECursorState.Click);
+                        print("Clicked");
+                        TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        //Yes, the time after you clicked, there's the time for the DoubleClick Judge get started.
+                        TimerHub.Instance.AddClockRent("CursorDoubleClickJudge");
+
+                        //Maybe you should Invoke something clickable, and put the code here.
+                        //Then the ability to controll the stateMachine is up to them.
+                    }
+                    else if(timeGap > _gapOfCursorClick)
+                    {
+                        StateMachine.TrySwitchToState(ECursorState.Normal);
+                        TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                    }
+                    break;
+                case ECursorState.Click:
+                    timeGap = TimerHub.Instance.GetAClock("CursorDoubleClickJudge");
+                    //if (Input.GetKeyDown(KeyCode.Mouse0) && timeGap < 0f)
+                    //{
+                    //}
+                    //else if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0 && timeGap < _gapOfCursorClick)
+                    if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0 && timeGap <= _gapOfCursorClick)
+                    {
+                        StateMachine.TrySwitchToState(ECursorState.DoubleClick);
+                        print("DoubleClicked");
+                        TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
+                    }
+                    else if(timeGap > _gapOfCursorClick)
+                    {
+                        StateMachine.TrySwitchToState(ECursorState.Normal);
+                        TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
+                    }
+                    break;
+                case ECursorState.DoubleClick:
+                    //[TODO]:Need to restore State-Normal if there's no clickable stuff existed. -ycMia
+                    StateMachine.TrySwitchToState(ECursorState.Normal);
+                    break;
             }
+            return;//Update
         }
     }
-
-    class CursorClickStateMachine : IStateMachine<CursorClickStateMachine.ECursorState>
+    
+    public enum ECursorState
     {
+        Normal,
+        Click,
+        DoubleClick,
+        Hold,
+    }
+
+    class CursorClickStateMachine : IStateMachine<ECursorState>
+    {
+        public ECursorState Current { get => _currentNode.data; }
         private List<CursorStateNode> _stateList;
         private CursorStateNode _currentNode = new CursorStateNode(ECursorState.Normal);
         public CursorClickStateMachine()
@@ -57,26 +114,33 @@ namespace MyScripts.Scripts.CursorControl
             return _currentNode.data;
         }
 
+        public void TrySwitchToState(string state)
+        {
+            switch(state)
+            {
+                case "Click": TrySwitchToState(ECursorState.Click); return;
+                case "DoubleClick": TrySwitchToState(ECursorState.DoubleClick); return;
+                case "Hold": TrySwitchToState(ECursorState.Hold); return;
+                case "Normal": TrySwitchToState(ECursorState.Normal); return;
+                default:break;
+            }
+        }
+
         public void TrySwitchToState(ECursorState state)
         {
+            if (state == _currentNode.data) return;
             foreach(CursorStateNode node in _currentNode.reachable)
             {
                 if (node.data == state)
                 {
                     _currentNode = node;
+                    return;
                 }
-                return;
             }
+            Debug.LogError("This State Is Not Allowed");
         }
 
         //----------//
-        public enum ECursorState
-        {
-            Normal,
-            Click,
-            DoubleClick,
-            Hold,
-        }
 
         public class CursorStateNode
         {
@@ -106,6 +170,11 @@ namespace MyScripts.Scripts.CursorControl
                         if (cs.data == ECursorState.Normal)
                             reachable.Add(cs);
                 //[Info] Damn, the machine is such a thing worth to pay. --ycMia
+                //DoubleClick   ->  Normal <->  Click  ->  DoubleClick
+                //                     ^
+                //                     |
+                //                     V
+                //                    Hold
             }
         }
     }

@@ -38,7 +38,8 @@ namespace MyScripts.Logics.Time
         {
             if(_timeDictionary.ContainsKey(clockName))
             {
-                clockName += "R";
+                AddClockRent(clockName+"R");
+                return;
                 //[Question] Why R? Maybe that's the only alpha that may not conflict lol.
             }
             _timeDictionary.Add(clockName, 0f);
@@ -63,8 +64,10 @@ namespace MyScripts.Logics.Time
 
         public float GetAClock(string clockName)
         {
-            //You might want to check this logic twice. I'm serious.
-            return _timeDictionary[clockName] + UnityEngine.Time.deltaTime;
+            if(_timeDictionary.Keys.Contains(clockName))
+                //You might want to check this logic twice. I'm serious.
+                return _timeDictionary[clockName] + UnityEngine.Time.deltaTime;
+            return -1f;
         }
 
         private void Update()
