@@ -18,23 +18,25 @@ public class GameManager : SimpleMessageSender<string>
         //}
         // //That was succeeded ^
 
-        string rstr = "R";
-        for(int i =0;i<100;i++)
-        {
-            TimerHub.Instance.AddClockRent(rstr);
-            rstr += "R";
-        }
+        //string rstr = "R";
+        //for(int i =0;i<100;i++)
+        //{
+        //    TimerHub.Instance.AddClockRent(rstr);
+        //    rstr += "R";
+        //}
     }
 
     // Update is called once per frame
     void Update()
     {
-        for (int i = 0; i < 100; i++)
-        {
-            string rstr = "R";
-            for (int j = 0; j < i; j++)
-                rstr += "R";
-            receiver.GetMsgReceiver().Add(new SimpleMessage<string>(TimerHub.Instance.TimeDictionary[rstr].ToString("F5")));
-        }
+        receiver.GetMsgReceiver().Add(new SimpleMessage<string>("ClickJ:"+TimerHub.Instance.GetAClock("CursorClickJudge").ToString("F5")));
+        receiver.GetMsgReceiver().Add(new SimpleMessage<string>("DoubleJ:"+TimerHub.Instance.GetAClock("CursorDoubleClickJudge").ToString("F5")));
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    string rstr = "R";
+        //    for (int j = 0; j < i; j++)
+        //        rstr += "R";
+        //    receiver.GetMsgReceiver().Add(new SimpleMessage<string>(TimerHub.Instance.TimeDictionary[rstr].ToString("F5")));
+        //}
     }
 }
