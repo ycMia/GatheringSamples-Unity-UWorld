@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.Cursor;
-using File;
-namespace File_
+using MyScripts.CursorControl;
+using MyScripts.CursorControl.State;
+using MyScripts;
+
+namespace MyScripts.Interactable.File
 {
     public class File_ : FileOn
     {
@@ -22,5 +24,4 @@ namespace File_
             }
         }
     }
-
 }
