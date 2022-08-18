@@ -14,7 +14,6 @@ namespace MyScripts.Interactable.File
         private bool flag = false;
         public SpriteRenderer srHighlight;
 
-        //@relaxious �Բ���һ��ʼ��ʱ���������ӿ���,�������޸�
         public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine; //CursorStateMahcine MUST be a static one.
 
         public bool stayState = false;
