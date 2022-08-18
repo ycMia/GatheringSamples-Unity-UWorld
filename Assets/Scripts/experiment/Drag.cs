@@ -12,6 +12,7 @@ namespace MyScripts.Experiment
     public class Drag : MonoBehaviour
     {
         //public CursorManager cursorMM;
+        bool fl = true;
         public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine;
         public Rigidbody2D rb2D;
         Vector2 MousePos;
@@ -39,19 +40,21 @@ namespace MyScripts.Experiment
         {
             if (Stay)
             {
-                if (cursorStateMachine.GetState() == ECursorState.Click)
-                {
-                    Distance = new Vector2(rb2D.transform.position.x, rb2D.transform.position.y) - MousePos;
-                }
                 if (cursorStateMachine.GetState() == ECursorState.Hold)
                 {
-                    rb2D.transform.position = MousePos + Distance;
+                    if (fl)
+                    {
+                        Distance = new Vector2(rb2D.transform.position.x, rb2D.transform.position.y) - MousePos;
+                        fl = false;
+                    }
+                    rb2D.transform.position = Distance + MousePos;
                     rb2D.gravityScale = 0;
                     rb2D.velocity = Vector2.zero;
                 }
-                if (cursorStateMachine.GetState() == ECursorState.Normal)
+                else if (cursorStateMachine.GetState() == ECursorState.Normal)
                 {
                     rb2D.gravityScale = 1;
+                    fl = true;
                 }
             }
         }
