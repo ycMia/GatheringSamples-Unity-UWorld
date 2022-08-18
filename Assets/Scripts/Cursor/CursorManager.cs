@@ -4,6 +4,8 @@ using MyScripts.Logics.Time;
 using MyScripts.Logics.StateMachine;
 
 using MyScripts.CursorControl.State;
+using System;
+
 namespace MyScripts.CursorControl
 {
     public class CursorManager : MonoBehaviour
@@ -11,22 +13,26 @@ namespace MyScripts.CursorControl
         [SerializeField] private GameObject cursorPrefab;
         public GameObject cursorGO;
         private Animator animator;
-        private CursorClickStateMachine _stateMachine = new CursorClickStateMachine();
-        internal IStateMachine<ECursorState> stateMachine { get => _stateMachine; }
+        //[Info]: Modified 0818, the stateMachine is unique and should be set in static mode.
+        private static CursorClickStateMachine _stateMachine = new CursorClickStateMachine();
+        public static IStateMachine<ECursorState> Instance_StateMachine
+        {
+            get => _stateMachine;
+        }
 
         //This is a stupid method, I'd rather not to use such counts.
-        public int askForClickCount = 0;
-        public int askForDBClickCount = 0;
+        //public int askForClickCount = 0;
+        //public int askForDoubleClickCount = 0;
 
         [SerializeField, Range(0.04f, 1f)] private float _gapOfCursorClick;
 
         private void Awake()
         {
             //You Don't want to see that WindowsWhiteHead do you (lol)
-            Cursor.visible = false;
+            UnityEngine.Cursor.visible = false;
             cursorGO = Instantiate(cursorPrefab);
             cursorGO.name = "CursorGameObject";
-
+            cursorGO.tag = standardCursorTag;
             animator = cursorGO.GetComponent<Animator>();
         }
 
@@ -37,7 +43,7 @@ namespace MyScripts.CursorControl
             //animator.SetBool("Hold", Input.GetKey(KeyCode.Mouse0));
 
             float timeGap; //will be given a value in each case tag.
-            switch (stateMachine.GetState())
+            switch (_stateMachine.GetState())
             {
                 case ECursorState.Normal:
                     timeGap = TimerHub.Instance.GetAClock("CursorClickJudge");
@@ -47,44 +53,54 @@ namespace MyScripts.CursorControl
                     }
                     else if(Input.GetKeyUp(KeyCode.Mouse0) && timeGap>0f && timeGap < _gapOfCursorClick)
                     {
-                        stateMachine.TrySwitchToState(ECursorState.Click);
                         print("Clicked");
                         TimerHub.Instance.SweepOutClock("CursorClickJudge");
                         //Yes, the time after you clicked, there's the time for the DoubleClick Judge get started.
                         TimerHub.Instance.AddClockRent("CursorDoubleClickJudge");
-
-                        //Maybe you should Invoke something clickable, and put the code here.
-                        //Then the ability to controll the stateMachine is up to them.
-                        askForClickCount++;
+                        // exp: same as to "askForClickCount++;"
+                        _stateMachine.TrySwitchToState(ECursorState.Click_CommandAwait);
                     }
                     else if(timeGap > _gapOfCursorClick)
                     {
-                        stateMachine.TrySwitchToState(ECursorState.Normal);
-                        TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        if(Input.GetKey(KeyCode.Mouse0) == false)
+                        {
+                            _stateMachine.TrySwitchToState(ECursorState.Normal);
+                            TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        }
+                        else
+                        {
+                            _stateMachine.TrySwitchToState(ECursorState.Hold);
+                            TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        }
                     }
                     break;
                 case ECursorState.Click:
+                case ECursorState.Click_CommandAwait:
                     timeGap = TimerHub.Instance.GetAClock("CursorDoubleClickJudge");
-                    //if (Input.GetKeyDown(KeyCode.Mouse0) && timeGap < 0f)
-                    //{
-                    //}
-                    //else if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0 && timeGap < _gapOfCursorClick)
+                    if (timeGap > Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.Click);
                     if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0 && timeGap <= _gapOfCursorClick)
                     {
-                        stateMachine.TrySwitchToState(ECursorState.DoubleClick);
                         print("DoubleClicked");
                         TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.DoubleClick_CommandAwait);
                     }
                     else if(timeGap > _gapOfCursorClick)
                     {
-                        stateMachine.TrySwitchToState(ECursorState.Normal);
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
                         TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
-                        askForClickCount = 0;
                     }
                     break;
                 case ECursorState.DoubleClick:
-                    //[TODO]:Need to restore State-Normal if there's no clickable stuff existed. -ycMia
-                    stateMachine.TrySwitchToState(ECursorState.Normal);
+                case ECursorState.DoubleClick_CommandAwait:
+                    timeGap = TimerHub.Instance.GetAClock("CursorDoubleClickJudge");
+                    //Thus, I don't know what to do but obey the details that Click have done.
+                    //This might be a useless code line.
+                    if(timeGap>Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
+                    _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
+                    break;
+                case ECursorState.Hold:
+                    if (Input.GetKey(KeyCode.Mouse0) == false)
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
                     break;
             }
             return;//Update
@@ -96,13 +112,14 @@ namespace MyScripts.CursorControl
             private CursorStateNode _currentNode = new CursorStateNode(ECursorState.Normal);
             public CursorClickStateMachine()
             {
-                _stateList = new List<CursorStateNode>()
-            {
-                _currentNode,
-                new CursorStateNode(ECursorState.Click),
-                new CursorStateNode(ECursorState.DoubleClick),
-                new CursorStateNode(ECursorState.Hold)
-            };
+                _stateList = new List<CursorStateNode>(){
+                    _currentNode,
+                    new CursorStateNode(ECursorState.Click),
+                    new CursorStateNode(ECursorState.Click_CommandAwait),
+                    new CursorStateNode(ECursorState.DoubleClick),
+                    new CursorStateNode(ECursorState.DoubleClick_CommandAwait),
+                    new CursorStateNode(ECursorState.Hold)
+                };
 
                 _stateList.ForEach(delegate (CursorStateNode cs) { cs.MakeLinkInList(_stateList); });
             }
@@ -112,16 +129,10 @@ namespace MyScripts.CursorControl
                 return _currentNode.data;
             }
 
+            //Do not use this function too often otherwise some Bug might 発動する.
             public void TrySwitchToState(string state)
             {
-                switch (state)
-                {
-                    case "Click": TrySwitchToState(ECursorState.Click); return;
-                    case "DoubleClick": TrySwitchToState(ECursorState.DoubleClick); return;
-                    case "Hold": TrySwitchToState(ECursorState.Hold); return;
-                    case "Normal": TrySwitchToState(ECursorState.Normal); return;
-                    default: break;
-                }
+                TrySwitchToState((ECursorState)Enum.Parse(typeof(ECursorState), state));
             }
 
             public void TrySwitchToState(ECursorState state)
@@ -135,7 +146,7 @@ namespace MyScripts.CursorControl
                         return;
                     }
                 }
-                Debug.LogError("This State Is Not Allowed");
+                Debug.LogError("This State Is Not Allowed: "+_currentNode.data.ToString() + " to " + state.ToString());
             }
 
             //----------//
@@ -153,29 +164,31 @@ namespace MyScripts.CursorControl
                 {
                     if (data == ECursorState.Normal)
                         foreach (CursorStateNode cs in list)
-                            if (cs.data == ECursorState.Click || cs.data == ECursorState.Hold)
+                            if (/*cs.data == ECursorState.Click ||*/ cs.data == ECursorState.Click_CommandAwait || cs.data == ECursorState.Hold)
                                 reachable.Add(cs);
-                    if (data == ECursorState.Click)
+                    if (data == ECursorState.Click || data == ECursorState.Click_CommandAwait)
+                        foreach (CursorStateNode cs in list)
+                            if (cs.data == ECursorState.Click || cs.data == ECursorState.DoubleClick_CommandAwait || cs.data == ECursorState.Normal)
+                                reachable.Add(cs);
+                    if (data == ECursorState.DoubleClick || data == ECursorState.DoubleClick_CommandAwait)
                         foreach (CursorStateNode cs in list)
                             if (cs.data == ECursorState.DoubleClick || cs.data == ECursorState.Normal)
-                                reachable.Add(cs);
-                    if (data == ECursorState.DoubleClick)
-                        foreach (CursorStateNode cs in list)
-                            if (cs.data == ECursorState.Normal)
                                 reachable.Add(cs);
                     if (data == ECursorState.Hold)
                         foreach (CursorStateNode cs in list)
                             if (cs.data == ECursorState.Normal)
                                 reachable.Add(cs);
                     //[Info] Damn, the machine is such a thing worth to pay. --ycMia
-                    //DoubleClick   ->  Normal <->  Click  ->  DoubleClick
-                    //                     ^
-                    //                     |
-                    //                     V
-                    //                    Hold
+                    //DoubleClick(_CommandAwait)   ->  Normal <->  Click(_CommandAwait)  ->  DoubleClick(_CommandAwait)
+                    //                                   ^          
+                    //                                   |
+                    //                                   V
+                    //                                  Hold
                 }
             }
         }
+        //[Info | Warning] look up your project setting
+        public static string standardCursorTag = "Cursor";
     }
 }
 
@@ -185,7 +198,9 @@ namespace MyScripts.CursorControl.State
     {
         Normal,
         Click,
+        Click_CommandAwait,
         DoubleClick,
+        DoubleClick_CommandAwait,
         Hold,
     }
 }
