@@ -14,7 +14,7 @@ namespace MyScripts.Interactable.File
         private bool flag = false;
         public SpriteRenderer srHighlight;
 
-        //@relaxious 对不起一开始的时候忘记用这接口了,代码已修改
+        //@relaxious 锟皆诧拷锟斤拷一锟斤拷始锟斤拷时锟斤拷锟斤拷锟斤拷锟斤拷锟接匡拷锟斤拷,锟斤拷锟斤拷锟斤拷锟睫革拷
         public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine; //CursorStateMahcine MUST be a static one.
 
         public bool stayState = false;
