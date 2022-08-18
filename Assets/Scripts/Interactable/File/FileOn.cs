@@ -37,7 +37,7 @@ namespace MyScripts.Interactable.File
 
         void Update()
         {
-            Debug.Log("State machine :" + cursorStateMachine.GetState().ToString());
+            //Debug.Log("State machine :" + cursorStateMachine.GetState().ToString());
 
             if (stayState)
             {

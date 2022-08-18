@@ -11,7 +11,7 @@ namespace MyScripts.CursorControl
     public class CursorManager : MonoBehaviour
     {
         [SerializeField] private GameObject cursorPrefab;
-        public GameObject cursorGO;
+        [HideInInspector] public GameObject cursorGO;
         private Animator animator;
         //[Info]: Modified 0818, the stateMachine is unique and should be set in static mode.
         private static CursorClickStateMachine _stateMachine = new CursorClickStateMachine();
@@ -96,7 +96,7 @@ namespace MyScripts.CursorControl
                     //Thus, I don't know what to do but obey the details that Click have done.
                     //This might be a useless code line.
                     if(timeGap>Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
-                    _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
+                    _stateMachine.TrySwitchToState(ECursorState.Normal);
                     break;
                 case ECursorState.Hold:
                     if (Input.GetKey(KeyCode.Mouse0) == false)
