@@ -27,12 +27,14 @@ namespace MyScripts.Experiment
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            stayState = true;
+            if(collision.gameObject.tag == CursorManager.standardCursorTag)
+                stayState = true;
         }
 
         private void OnTriggerExit2D(Collider2D collision)
         {
-            stayState = false;
+            if(collision.gameObject.tag == CursorManager.standardCursorTag)
+                stayState = false;
         }
 
         // Update is called once per frame

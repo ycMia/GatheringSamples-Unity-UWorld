@@ -25,14 +25,20 @@ namespace MyScripts.Interactable.File
 
         public void OnTriggerEnter2D(Collider2D trigger)
         {
-            print("CollisionEnter");
-            if(trigger.gameObject.tag == CursorManager.standardCursorTag) stayState = true;
+            if(trigger.gameObject.tag == CursorManager.standardCursorTag)
+            {
+                stayState = true;
+                print("CursorEnter");
+            }
         }
 
         public void OnTriggerExit2D(Collider2D trigger)
         {
-            print("CollisionExit");
-            if (trigger.gameObject.tag == CursorManager.standardCursorTag) stayState = false;
+            if (trigger.gameObject.tag == CursorManager.standardCursorTag)
+            {
+                stayState = false;
+                print("CollisionExit");
+            }
         }
 
         void Update()
