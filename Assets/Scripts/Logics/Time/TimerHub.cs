@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Unity;
 using UnityEngine;
 
-
 using MyScripts.Logics.Message;
 
 //welcome to Kiki's magic time shop!
