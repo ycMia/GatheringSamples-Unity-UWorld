@@ -9,7 +9,10 @@ namespace Class
     //以下为可移动的物体的类
     public class C_Move : MonoBehaviour, I_K_Move, I_M_Move
     {
-
+        void FixedUpdate()
+        {
+            K_Movement();
+        }
         public Rigidbody2D rb;
         public float speed;
         public float jumpforce;
@@ -22,10 +25,6 @@ namespace Class
             if (horizontalmove != 0)
             {
                 rb.velocity = new Vector2(horizontalmove * speed * Time.deltaTime, rb.velocity.y);
-            }
-            if (facedirection != 0)
-            {
-                transform.localScale = new Vector3(facedirection, 1, 1);
             }
             if (Input.GetButtonDown("Jump"))
             {

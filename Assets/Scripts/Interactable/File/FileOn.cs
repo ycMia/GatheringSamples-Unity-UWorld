@@ -37,7 +37,7 @@ namespace MyScripts.Interactable.File
 
         void Update()
         {
-            Debug.Log("askForClickCount:" + cursorM.askForClickCount.ToString());
+            //Debug.Log("askForClickCount:" + cursorM.askForClickCount.ToString());
 
             if (stayState)
             {
