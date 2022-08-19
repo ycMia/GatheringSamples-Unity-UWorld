@@ -11,7 +11,7 @@ namespace MyScripts.Interactable.File
 {
     public class FileOn : MonoBehaviour, ICursorInteractable
     {
-        private bool flag = false;
+        public bool flag = false;
         public SpriteRenderer srHighlight;
 
         public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine; //CursorStateMahcine MUST be a static one.

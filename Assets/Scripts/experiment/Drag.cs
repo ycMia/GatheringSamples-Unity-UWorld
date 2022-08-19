@@ -20,7 +20,7 @@ namespace MyScripts.Experiment
         public bool Stay = false;
         public void OnTriggerEnter2D(Collider2D trigger)
         {
-            print("CollisionEnter");
+            print("CollisionEnter "+trigger.name);
             if (trigger.gameObject.tag == CursorManager.standardCursorTag) Stay = true;
         }
         public void OnTriggerExit2D(Collider2D trigger)
