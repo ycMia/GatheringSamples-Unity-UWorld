@@ -96,7 +96,7 @@ namespace MyScripts.CursorControl
                     //Thus, I don't know what to do but obey the details that Click have done.
                     //This might be a useless code line.
                     if(timeGap>Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
-                    _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
+                    _stateMachine.TrySwitchToState(ECursorState.Normal);
                     break;
                 case ECursorState.Hold:
                     if (Input.GetKey(KeyCode.Mouse0) == false)
