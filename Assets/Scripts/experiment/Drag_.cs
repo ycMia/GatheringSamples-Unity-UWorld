@@ -7,9 +7,9 @@ using MyScripts.CursorControl.State;
 
 using MyScripts.Logics.StateMachine;
 
-namespace MyScripts.Experiment
+namespace MyScripts.Experiments
 {
-    public class Drag : MonoBehaviour
+    public class Drag_ : MonoBehaviour
     {
         //public CursorManager cursorMM;
         bool fl = true;
@@ -18,6 +18,8 @@ namespace MyScripts.Experiment
         Vector2 MousePos;
         Vector2 Distance;
         public bool Stay = false;
+        private Vector2 MousePost;
+        Vector2 a;
         public void OnTriggerEnter2D(Collider2D trigger)
         {
             print("CollisionEnter");
@@ -30,7 +32,7 @@ namespace MyScripts.Experiment
         }
         private void Start()
         {
-            rb2D = GetComponent<Rigidbody2D>();
+            //rb2D = GetComponent<Rigidbody2D>();
         }
         private void Update()
         {
@@ -47,13 +49,13 @@ namespace MyScripts.Experiment
                         Distance = new Vector2(rb2D.transform.position.x, rb2D.transform.position.y) - MousePos;
                         fl = false;
                     }
-                    rb2D.transform.position = Distance + MousePos;
+                    rb2D.transform.position = Distance+MousePos;
                     rb2D.gravityScale = 0;
                     rb2D.velocity = Vector2.zero;
                 }
                 else if (cursorStateMachine.GetState() == ECursorState.Normal)
                 {
-                    rb2D.gravityScale = 1;
+                    rb2D.gravityScale = 0;
                     fl = true;
                 }
             }

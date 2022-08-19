@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MyScripts.Logics.Message;
-
+using MyScripts.CursorControl;
+using MyScripts.CursorControl.State;
 using MyScripts.Logics.Time;
+using MS.F;
+using MS.T;
 
 public class GameManager : SimpleMessageSender<string>
 {
-    public SimpleValueProjector receiver;
+    //public SimpleValueProjector receiver;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,8 +32,13 @@ public class GameManager : SimpleMessageSender<string>
     // Update is called once per frame
     void Update()
     {
-        receiver.GetMsgReceiver().Add(new SimpleMessage<string>("ClickJ:"+TimerHub.Instance.GetAClock("CursorClickJudge").ToString("F5")));
-        receiver.GetMsgReceiver().Add(new SimpleMessage<string>("DoubleJ:"+TimerHub.Instance.GetAClock("CursorDoubleClickJudge").ToString("F5")));
+        foreach (SimpleMessage<ColorfulFile_uniqueData> data in SimpleMessageCortexDefault<ColorfulFile_uniqueData>.Instance.MsgData())
+        {
+            print(data.info.result);
+        }
+        //print("NowStatus="+CursorManager.Instance_StateMachine.GetState().ToString());
+        //receiver.GetMsgReceiver().Add(new SimpleMessage<string>("ClickJ:"+TimerHub.Instance.GetAClock("CursorClickJudge").ToString("F5")));
+        //receiver.GetMsgReceiver().Add(new SimpleMessage<string>("DoubleJ:"+TimerHub.Instance.GetAClock("CursorDoubleClickJudge").ToString("F5")));
         //for (int i = 0; i < 100; i++)
         //{
         //    string rstr = "R";
