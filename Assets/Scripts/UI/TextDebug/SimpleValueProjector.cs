@@ -8,6 +8,10 @@ using MyScripts.Logics.Message;
 public class SimpleValueProjector : SimpleMessageCortex_MonoBehaviour<string>
 {
     public Text textComponent;
+    /// <summary>
+    /// This parament controls wether the text is being sweeped out each frame.
+    /// </summary>
+    public bool textClearFlag;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +31,7 @@ public class SimpleValueProjector : SimpleMessageCortex_MonoBehaviour<string>
         {
             textComponent.text += msg.info + "\n";
         }
-        MsgData().Clear();
+        if(textClearFlag)
+            MsgData().Clear();
     }
 }

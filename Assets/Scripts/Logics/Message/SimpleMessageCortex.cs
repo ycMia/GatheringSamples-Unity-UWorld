@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace MyScripts.Logics.Message
 {
-    public class SimpleMessageCortexDefault<T> : MonoBehaviour, ISimpleMessageReceiver<T>
+    public class SimpleMessageCortexDefault<T> :  ISimpleMessageReceiver<T>
     {
         private static SimpleMessageCortexDefault<T> _Instance;
         public static SimpleMessageCortexDefault<T> Instance
@@ -13,10 +13,7 @@ namespace MyScripts.Logics.Message
             {
                 if(_Instance == null)
                 {
-                    GameObject obj = new GameObject("SimpleMessageReceiver_Default");
-                    obj.AddComponent<SimpleMessageCortexDefault<T>>();
-                    _Instance = obj.GetComponent<SimpleMessageCortexDefault<T>>();
-                    DontDestroyOnLoad(obj);
+                    _Instance = new SimpleMessageCortexDefault<T>();
                 }
                 return _Instance;
             }
