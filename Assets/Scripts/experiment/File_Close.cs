@@ -10,6 +10,7 @@ namespace Experiment.File
 {
     public class File_Close : MonoBehaviour
     {
+        public GameObject F_Close_2;
         public GameObject F_Close;
         public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine;
         public bool stayState = false;
