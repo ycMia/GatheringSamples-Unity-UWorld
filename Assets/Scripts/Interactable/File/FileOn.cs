@@ -14,7 +14,6 @@ namespace MyScripts.Interactable.File
         private bool flag = false;
         public SpriteRenderer srHighlight;
 
-        //@relaxious �Բ���һ��ʼ��ʱ���������ӿ���,�������޸�
         public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine; //CursorStateMahcine MUST be a static one.
 
         public bool stayState = false;
@@ -26,19 +25,25 @@ namespace MyScripts.Interactable.File
 
         public void OnTriggerEnter2D(Collider2D trigger)
         {
-            print("CollisionEnter");
-            if(trigger.gameObject.tag == CursorManager.standardCursorTag) stayState = true;
+            if(trigger.gameObject.tag == CursorManager.standardCursorTag)
+            {
+                stayState = true;
+                print("CursorEnter");
+            }
         }
 
         public void OnTriggerExit2D(Collider2D trigger)
         {
-            print("CollisionExit");
-            if (trigger.gameObject.tag == CursorManager.standardCursorTag) stayState = false;
+            if (trigger.gameObject.tag == CursorManager.standardCursorTag)
+            {
+                stayState = false;
+                print("CollisionExit");
+            }
         }
 
         void Update()
         {
-            Debug.Log("State machine :" + cursorStateMachine.GetState().ToString());
+            //Debug.Log("State machine :" + cursorStateMachine.GetState().ToString());
 
             if (stayState)
             {

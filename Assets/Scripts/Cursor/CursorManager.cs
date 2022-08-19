@@ -11,7 +11,9 @@ namespace MyScripts.CursorControl
     public class CursorManager : MonoBehaviour
     {
         [SerializeField] private GameObject cursorPrefab;
-        public GameObject cursorGO;
+        [HideInInspector] public GameObject cursorGO;
+
+        private Vector3 _memCursorGOPos = new Vector3();
         private Animator animator;
         //[Info]: Modified 0818, the stateMachine is unique and should be set in static mode.
         private static CursorClickStateMachine _stateMachine = new CursorClickStateMachine();
@@ -34,14 +36,13 @@ namespace MyScripts.CursorControl
             cursorGO.name = "CursorGameObject";
             cursorGO.tag = standardCursorTag;
             animator = cursorGO.GetComponent<Animator>();
+            _memCursorGOPos = cursorGO.transform.position;
         }
 
         void Update()
         {
             //follow
             cursorGO.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0,0,10f);
-            //animator.SetBool("Hold", Input.GetKey(KeyCode.Mouse0));
-
             float timeGap; //will be given a value in each case tag.
             switch (_stateMachine.GetState())
             {
@@ -82,6 +83,7 @@ namespace MyScripts.CursorControl
                     {
                         print("DoubleClicked");
                         TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
+                        TimerHub.Instance.AddClockRent("CursorAfterDoubleClickJudge");
                         _stateMachine.TrySwitchToState(ECursorState.DoubleClick_CommandAwait);
                     }
                     else if(timeGap > _gapOfCursorClick)
@@ -92,17 +94,35 @@ namespace MyScripts.CursorControl
                     break;
                 case ECursorState.DoubleClick:
                 case ECursorState.DoubleClick_CommandAwait:
-                    timeGap = TimerHub.Instance.GetAClock("CursorDoubleClickJudge");
-                    //Thus, I don't know what to do but obey the details that Click have done.
-                    //This might be a useless code line.
-                    if(timeGap>Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.DoubleClick);
-                    _stateMachine.TrySwitchToState(ECursorState.Normal);
+                    timeGap = TimerHub.Instance.GetAClock("CursorAfterDoubleClickJudge");
+                    if(timeGap>Time.maximumDeltaTime)
+                    {
+                        TimerHub.Instance.SweepOutClock("CursorAfterDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
+                    }
                     break;
                 case ECursorState.Hold:
                     if (Input.GetKey(KeyCode.Mouse0) == false)
                         _stateMachine.TrySwitchToState(ECursorState.Normal);
                     break;
             }
+
+            if(cursorGO.transform.position != _memCursorGOPos)
+            {
+                switch (_stateMachine.GetState())
+                {
+                    case ECursorState.Normal:
+                    case ECursorState.Hold:
+                        break;
+                    default:
+                        TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
+                        TimerHub.Instance.SweepOutClock("CursorAfterDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
+                        break;
+                }
+            }
+            _memCursorGOPos = cursorGO.transform.position;
             return;//Update
         }
         public class CursorClickStateMachine : IStateMachine<ECursorState>
