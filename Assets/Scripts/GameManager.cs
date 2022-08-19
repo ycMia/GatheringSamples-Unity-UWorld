@@ -41,6 +41,7 @@ public class GameManager : SimpleMessageSender<string>
         switch(SceneManager.GetActiveScene().name)
         {
             case "DoubleClickScene":
+            case "BasicCursorScene":
                 receiver.GetMsgReceiver().Add(new SimpleMessage<string>("ClickJ:" + TimerHub.Instance.GetAClock("CursorClickJudge").ToString("F5")));
                 receiver.GetMsgReceiver().Add(new SimpleMessage<string>("DoubleJ:" + TimerHub.Instance.GetAClock("CursorDoubleClickJudge").ToString("F5")));
                 break;

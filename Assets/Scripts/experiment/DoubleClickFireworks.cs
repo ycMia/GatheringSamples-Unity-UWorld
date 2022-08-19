@@ -1,63 +1,32 @@
-using MyScripts.CursorControl;
-using MyScripts.CursorControl.State;
-using MyScripts.Logics.StateMachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 using Unity;
 
-using MyScripts.Logics.Tools;
+using MyScripts.Interactable;
 using MyScripts.Logics.Time;
 
 namespace MyScripts.Experiment
 {
-    public class DoubleClickFireworks : MonoBehaviour
+    public class DoubleClickFireworks : MonoBehaviour , ICursorDoubleClickable
     {
         public GameObject molePrefab;
-
-        public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine; //CursorStateMahcine MUST be a static one.
-        private bool stayState;
-
-        // Start is called before the first frame update
-        void Start()
-        {
-            
-        }
-
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if(collision.gameObject.tag == CursorManager.standardCursorTag)
-                stayState = true;
-        }
-
-        private void OnTriggerExit2D(Collider2D collision)
-        {
-            if(collision.gameObject.tag == CursorManager.standardCursorTag)
-                stayState = false;
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-            if (stayState && cursorStateMachine.GetState() == ECursorState.DoubleClick_CommandAwait)
-            {
-                DoFirework();
-                return;
-            }
-        }
+        public int fireworkCount = 25;
 
         public float f1;
         public float f2;
         public float f3;
-        
+
+        public void OnDoubleClick()
+        {
+            DoFirework();
+        }
+
         private void DoFirework()
         {
             GameObject molecules_parent = new GameObject("Molecules Parent");
             molecules_parent.AddComponent<SelfBoomTruck>();
             molecules_parent.GetComponent<SelfBoomTruck>().ActivateCountdown(1.8f);
             molecules_parent.transform.position = gameObject.transform.position;
-            for (int i=0;i<100;i++)
+            for (int i=0;i<fireworkCount;i++)
             {
                 GameObject molecule = Instantiate(molePrefab, new Vector2(molecules_parent.transform.position.x+Random.Range(-0.5f, 0.5f), molecules_parent.transform.position.y+Random.Range(-0.5f, 0.5f)), molecules_parent.transform.rotation,molecules_parent.transform);
                 molecule.AddComponent<SelfBoomTruck>();

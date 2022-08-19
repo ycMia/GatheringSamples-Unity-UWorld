@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using MyScripts.Cursor;
+using MyScripts.Interactable;
 using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
@@ -28,7 +28,6 @@ namespace MyScripts.Interactable.File
             if(trigger.gameObject.tag == CursorManager.standardCursorTag)
             {
                 stayState = true;
-                print("CursorEnter");
             }
         }
 
@@ -37,7 +36,6 @@ namespace MyScripts.Interactable.File
             if (trigger.gameObject.tag == CursorManager.standardCursorTag)
             {
                 stayState = false;
-                print("CollisionExit");
             }
         }
 

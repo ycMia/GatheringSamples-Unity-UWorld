@@ -54,7 +54,6 @@ namespace MyScripts.CursorControl
                     }
                     else if(Input.GetKeyUp(KeyCode.Mouse0) && timeGap>0f && timeGap < _gapOfCursorClick)
                     {
-                        print("Clicked");
                         TimerHub.Instance.SweepOutClock("CursorClickJudge");
                         //Yes, the time after you clicked, there's the time for the DoubleClick Judge get started.
                         TimerHub.Instance.AddClockRent("CursorDoubleClickJudge");
@@ -81,7 +80,6 @@ namespace MyScripts.CursorControl
                     if (timeGap > Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.Click);
                     if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0 && timeGap <= _gapOfCursorClick)
                     {
-                        print("DoubleClicked");
                         TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
                         TimerHub.Instance.AddClockRent("CursorAfterDoubleClickJudge");
                         _stateMachine.TrySwitchToState(ECursorState.DoubleClick_CommandAwait);
