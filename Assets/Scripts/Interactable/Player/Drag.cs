@@ -7,7 +7,7 @@ using MyScripts.CursorControl.State;
 
 using MyScripts.Logics.StateMachine;
 
-namespace MyScripts.Experiment
+namespace MyScripts.Interactable.Player
 {
     public class Drag : MonoBehaviour
     {
@@ -18,6 +18,7 @@ namespace MyScripts.Experiment
         Vector2 MousePos;
         Vector2 Distance;
         public bool Stay = false;
+
         public void OnTriggerEnter2D(Collider2D trigger)
         {
             print("CollisionEnter "+trigger.name);
@@ -30,7 +31,8 @@ namespace MyScripts.Experiment
         }
         private void Start()
         {
-            rb2D = GetComponent<Rigidbody2D>();
+            rb2D ??= GetComponent<Rigidbody2D>();
+            rb2D ??= transform.parent.GetComponent<Rigidbody2D>();
         }
         private void Update()
         {

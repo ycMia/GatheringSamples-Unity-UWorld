@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyScripts.Interactable
 {
+    [Obsolete("\nThis method is currently not supported by The ClickListeners.\nPlease consider using ICursorSingleClickable etc. instead.")]
     public interface ICursorInteractable
     {
         void OnCursorClick();
@@ -18,5 +19,10 @@ namespace MyScripts.Interactable
     public interface ICursorDoubleClickable
     {
         void OnDoubleClick();
+    }
+    public interface ICursorHoverable
+    {
+        void OnCursorHover();
+        void OnCursorNotHover();
     }
 }
