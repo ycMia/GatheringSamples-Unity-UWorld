@@ -8,11 +8,11 @@ using MyScripts.Logics.StateMachine;
 using MyScripts.Interactable.File;
 using MyScripts.Logics.Tools;
 
-namespace MyScripts.Interactable.Window
+namespace MyScripts.Interactable.WindowComposite
 {
     public class Op : FileOn , ICursorDoubleClickable
     {
-        public Window targetWindow;
+        public WindowFore targetWindow;
 
         private void Start()
         {

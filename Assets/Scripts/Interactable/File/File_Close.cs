@@ -6,13 +6,13 @@ using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
 using MyScripts.Logics.Tools;
-using MyScripts.Interactable.Window;
+using MyScripts.Interactable.WindowComposite;
 
 namespace MyScripts.Interactable.File
 {
     public class File_Close : MonoBehaviour , ICursorSingleClickable
     {
-        public Window targWindow;
+        public WindowFore targWindow;
 
         private void Start()
         {

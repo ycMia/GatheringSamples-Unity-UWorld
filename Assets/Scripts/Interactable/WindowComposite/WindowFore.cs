@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace MyScripts.Interactable.Window
+namespace MyScripts.Interactable.WindowComposite
 {
-    public class Window : MonoBehaviour
+    public class WindowFore : MonoBehaviour
     {
         public CombinedGameObjects comb = new CombinedGameObjects();
 
