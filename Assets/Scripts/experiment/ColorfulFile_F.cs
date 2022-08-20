@@ -30,6 +30,12 @@ namespace MS.F
             {
                 if (cursorStateMachine.GetState() == ECursorState.DoubleClick_CommandAwait)
                 {
+                    //SimpleMessageCortexDefault<ColorfulFile_F>.Instance.MsgData().Remove(SimpleMessageCortexDefault<ColorfulFile_F>.Instance.MsgData().ToArray()[0]);
+                    //SimpleMessageCortexDefault<ColorfulFile_F>.Instance.MsgData().ToArray()[0];
+                    //foreach (SimpleMessage<ColorfulFile_F> cfsm in SimpleMessageCortexDefault<ColorfulFile_F>.Instance.MsgData())
+                    //{
+                    //    Debug.Log(cfsm.info.data);
+                    //}
                     SendMessageToCortex(data);
                     cursorStateMachine.TrySwitchToState(ECursorState.DoubleClick);
                 }

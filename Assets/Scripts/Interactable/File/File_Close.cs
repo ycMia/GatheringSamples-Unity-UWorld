@@ -8,7 +8,7 @@ using MyScripts.Logics.StateMachine;
 using MyScripts.Logics.Tools;
 using MyScripts.Interactable.Window;
 
-namespace Experiment.File
+namespace MyScripts.Interactable.File
 {
     public class File_Close : MonoBehaviour , ICursorSingleClickable
     {
