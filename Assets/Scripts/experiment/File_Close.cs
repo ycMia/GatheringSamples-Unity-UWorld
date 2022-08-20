@@ -5,36 +5,25 @@ using MyScripts.Interactable;
 using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
+using MyScripts.Logics.Tools;
+using MyScripts.Interactable.Window;
 
 namespace Experiment.File
 {
-    public class File_Close : MonoBehaviour
+    public class File_Close : MonoBehaviour , ICursorSingleClickable
     {
-        public GameObject F_Close_2;
-        public GameObject F_Close;
-        public IStateMachine<ECursorState> cursorStateMachine = CursorManager.Instance_StateMachine;
-        public bool stayState = false;
+        public Window targWindow;
 
-        public void OnTriggerEnter2D(Collider2D trigger)
+        private void Start()
         {
-            print("CollisionEnter");
-            if (trigger.gameObject.tag == CursorManager.standardCursorTag) stayState = true;
+            if(gameObject.GetComponent<SingleClickListener>() == null)
+                gameObject.AddComponent<SingleClickListener>();
         }
 
-        public void OnTriggerExit2D(Collider2D trigger)
+        public void OnSingleClick()
         {
-            print("CollisionExit");
-            if (trigger.gameObject.tag == CursorManager.standardCursorTag) stayState = false;
-        }
-        private void Update()
-        {
-            if (stayState)
-            {
-                if (cursorStateMachine.GetState() == ECursorState.Click_CommandAwait)
-                {
-                    F_Close.SetActive(false);
-                }
-            }
+            foreach (GameObject go in targWindow.comb.objects)
+                go.SetActive(false);
         }
     }
-}
+} 

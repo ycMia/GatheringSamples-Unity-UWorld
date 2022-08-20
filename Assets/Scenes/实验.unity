@@ -502,7 +502,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72a26bb9b58ef1e4c997e635185c1f8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fl: 1
   rb2D: {fileID: 0}
+  MousePos: {x: 0, y: 0}
+  Distance: {x: 0, y: 0}
   Stay: 0
 --- !u!70 &181972682
 CapsuleCollider2D:
@@ -856,7 +859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   flag: 0
-  srHighlight: {fileID: 0}
+  srHighlight: {fileID: 314487477}
   stayState: 0
   go: {fileID: 1595333622}
 --- !u!1 &529476928
@@ -1275,7 +1278,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 685786442}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56ae332ca3c967b4ba6abdfb1af57671, type: 3}
+  m_Script: {fileID: 11500000, guid: 53317816b3a4b1c43b82632141f05508, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rb2D: {fileID: 1595333624}

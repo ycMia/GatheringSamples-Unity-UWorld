@@ -21,7 +21,7 @@ namespace MyScripts.Logics.Time
             {
                 if(_Instance == null)
                 {
-                    GameObject obj = new();
+                    GameObject obj = new("TimerHub");
                     obj.AddComponent<TimerHub>();
                     _Instance = obj.GetComponent<TimerHub>();
                     DontDestroyOnLoad(obj);
