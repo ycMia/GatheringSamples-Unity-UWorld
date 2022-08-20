@@ -49,6 +49,12 @@ namespace MyScripts.Logics.Time
             _timeDictionary.Remove(clockName);
         }
 
+        public void ResetAClock(string clockName)
+        {
+            SweepOutClock(clockName);
+            AddClockRent(clockName);
+        }
+
         public bool RefreshClock(string clockName)
         {
             if(_timeDictionary.ContainsKey(clockName))

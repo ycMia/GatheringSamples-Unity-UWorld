@@ -23,7 +23,7 @@ namespace MyScripts.Interactable.WindowComposite
             {
                 AddObjectsInWindowRecursively(comb, obj.transform.GetChild(i).gameObject);
                 comb.objects.Add(obj.transform.GetChild(i).gameObject);
-                Debug.Log("Add :" + obj.transform.GetChild(i).gameObject.name);
+                //Debug.Log("Add :" + obj.transform.GetChild(i).gameObject.name);
             }
         }
     }
