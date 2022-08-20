@@ -13,7 +13,7 @@ namespace MyScripts.Interactable.WindowComposite
     public class Op : FileOn , ICursorDoubleClickable
     {
         public WindowFore targetWindow;
-
+        public GameObject targetreference;
         private void Start()
         {
             if (GetComponent<DoubleClickListener>() == null)
@@ -26,6 +26,7 @@ namespace MyScripts.Interactable.WindowComposite
             {
                 obj.SetActive(true);
             }
+            targetreference.SetActive(true);
             srHighlight.color = Color.clear;
         }
     }
