@@ -44,10 +44,12 @@ namespace MyScripts.CursorControl
             //follow
             cursorGO.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition) + new Vector3(0,0,10f);
             float timeGap; //will be given a value in each case tag.
+            float R_timeGap;
             switch (_stateMachine.GetState())
             {
                 case ECursorState.Normal:
                     timeGap = TimerHub.Instance.GetAClock("CursorClickJudge");
+                    R_timeGap = TimerHub.Instance.GetAClock("R_CursorClickJudge");
                     if (Input.GetKeyDown(KeyCode.Mouse0) && timeGap<0f)
                     {
                         TimerHub.Instance.AddClockRent("CursorClickJudge");
@@ -73,10 +75,34 @@ namespace MyScripts.CursorControl
                             TimerHub.Instance.SweepOutClock("CursorClickJudge");
                         }
                     }
+                    else if (Input.GetKeyDown(KeyCode.Mouse1)&&R_timeGap<0f)
+                    {
+                        TimerHub.Instance.AddClockRent("R_CursorClickJudge");
+                    }
+                    else if (Input.GetKeyUp(KeyCode.Mouse1) && R_timeGap > 0f && R_timeGap < _gapOfCursorClick)
+                    {
+                        TimerHub.Instance.SweepOutClock("R_CursorClickJudge");
+                        TimerHub.Instance.AddClockRent("R_CursorDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.R_Click_CommandAwait);
+                    }
+                    else if (R_timeGap > _gapOfCursorClick)
+                    {
+                        if (!Input.GetKey(KeyCode.Mouse1))
+                        {
+                            _stateMachine.TrySwitchToState(ECursorState.Normal);
+                            TimerHub.Instance.SweepOutClock("R_CursorClickJudge");
+                        }
+                        else
+                        {
+                            _stateMachine.TrySwitchToState(ECursorState.R_Hold);
+                            TimerHub.Instance.SweepOutClock("R_CursorClickJudge");
+                        }
+                    }
                     break;
                 case ECursorState.Click:
                 case ECursorState.Click_CommandAwait:
                     timeGap = TimerHub.Instance.GetAClock("CursorDoubleClickJudge");
+                    R_timeGap = TimerHub.Instance.GetAClock("R_CursorClickJudge");
                     if (timeGap > Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.Click);
                     if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0 && timeGap <= _gapOfCursorClick)
                     {
@@ -89,18 +115,90 @@ namespace MyScripts.CursorControl
                         _stateMachine.TrySwitchToState(ECursorState.Normal);
                         TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
                     }
+                    else if (Input.GetKeyDown(KeyCode.Mouse1) && R_timeGap < 0f)
+                    {
+                        TimerHub.Instance.AddClockRent("R_CursorClickJudge");
+                    }
+                    else if (Input.GetKeyUp(KeyCode.Mouse1) && R_timeGap > 0f && R_timeGap < _gapOfCursorClick)
+                    {
+                        TimerHub.Instance.SweepOutClock("R_CursorClickJudge");
+                        TimerHub.Instance.AddClockRent("R_CursorDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.R_Click_CommandAwait);
+                    }
+                    break;
+                case ECursorState.R_Click:
+                case ECursorState.R_Click_CommandAwait:
+                    timeGap = TimerHub.Instance.GetAClock("CursorClickJudge");
+                    R_timeGap = TimerHub.Instance.GetAClock("R_CursorDoubleClickJudge");
+                    if (R_timeGap > Time.maximumDeltaTime) _stateMachine.TrySwitchToState(ECursorState.R_Click);
+                    if (Input.GetKeyUp(KeyCode.Mouse1) && R_timeGap > 0 && R_timeGap <= _gapOfCursorClick)
+                    {
+                        TimerHub.Instance.SweepOutClock("R_CursorDoubleClickJudge");
+                        TimerHub.Instance.AddClockRent("R_CursorAfterDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.R_DoubleClick_CommandAwait);
+                    }
+                    else if (R_timeGap > _gapOfCursorClick)
+                    {
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
+                        TimerHub.Instance.SweepOutClock("R_CursorDoubleClickJudge");
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Mouse0) && timeGap < 0f)
+                    {
+                        TimerHub.Instance.AddClockRent("CursorClickJudge");
+                    }
+                    else if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0f && timeGap < _gapOfCursorClick)
+                    {
+                        TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        TimerHub.Instance.AddClockRent("CursorDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.Click_CommandAwait);
+                    }
                     break;
                 case ECursorState.DoubleClick:
                 case ECursorState.DoubleClick_CommandAwait:
                     timeGap = TimerHub.Instance.GetAClock("CursorAfterDoubleClickJudge");
-                    if(timeGap>Time.maximumDeltaTime)
+                    R_timeGap = TimerHub.Instance.GetAClock("R_CursorClickJudge");
+                    if (timeGap>Time.maximumDeltaTime)
                     {
                         TimerHub.Instance.SweepOutClock("CursorAfterDoubleClickJudge");
                         _stateMachine.TrySwitchToState(ECursorState.Normal);
                     }
+                    else if (Input.GetKeyDown(KeyCode.Mouse1) && R_timeGap < 0f)
+                    {
+                        TimerHub.Instance.AddClockRent("R_CursorClickJudge");
+                    }
+                    else if (Input.GetKeyUp(KeyCode.Mouse1) && R_timeGap > 0f && R_timeGap < _gapOfCursorClick)
+                    {
+                        TimerHub.Instance.SweepOutClock("R_CursorClickJudge");
+                        TimerHub.Instance.AddClockRent("R_CursorDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.R_Click_CommandAwait);
+                    }
+                    break;
+                case ECursorState.R_DoubleClick:
+                case ECursorState.R_DoubleClick_CommandAwait:
+                    timeGap = TimerHub.Instance.GetAClock("CursorClickJudge");
+                    R_timeGap = TimerHub.Instance.GetAClock("R_CursorAfterDoubleClickJudge");
+                    if (R_timeGap > Time.maximumDeltaTime)
+                    {
+                        TimerHub.Instance.SweepOutClock("R_CursorAfterDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
+                    }
+                    else if (Input.GetKeyDown(KeyCode.Mouse0) && timeGap < 0f)
+                    {
+                        TimerHub.Instance.AddClockRent("CursorClickJudge");
+                    }
+                    else if (Input.GetKeyUp(KeyCode.Mouse0) && timeGap > 0f && timeGap < _gapOfCursorClick)
+                    {
+                        TimerHub.Instance.SweepOutClock("CursorClickJudge");
+                        TimerHub.Instance.AddClockRent("CursorDoubleClickJudge");
+                        _stateMachine.TrySwitchToState(ECursorState.Click_CommandAwait);
+                    }
                     break;
                 case ECursorState.Hold:
                     if (Input.GetKey(KeyCode.Mouse0) == false)
+                        _stateMachine.TrySwitchToState(ECursorState.Normal);
+                    break;
+                case ECursorState.R_Hold:
+                    if (!Input.GetKey(KeyCode.Mouse1))
                         _stateMachine.TrySwitchToState(ECursorState.Normal);
                     break;
             }
@@ -111,8 +209,12 @@ namespace MyScripts.CursorControl
                 {
                     case ECursorState.Normal:
                     case ECursorState.Hold:
+                    case ECursorState.R_Hold:
                         break;
                     default:
+                        TimerHub.Instance.SweepOutClock("R_CursorClickJudge");
+                        TimerHub.Instance.SweepOutClock("R_CursorDoubleClickJudge");
+                        TimerHub.Instance.SweepOutClock("R_CursorAfterDoubleClickJudge");
                         TimerHub.Instance.SweepOutClock("CursorClickJudge");
                         TimerHub.Instance.SweepOutClock("CursorDoubleClickJudge");
                         TimerHub.Instance.SweepOutClock("CursorAfterDoubleClickJudge");
@@ -136,7 +238,12 @@ namespace MyScripts.CursorControl
                     new CursorStateNode(ECursorState.Click_CommandAwait),
                     new CursorStateNode(ECursorState.DoubleClick),
                     new CursorStateNode(ECursorState.DoubleClick_CommandAwait),
-                    new CursorStateNode(ECursorState.Hold)
+                    new CursorStateNode(ECursorState.Hold),
+                    new CursorStateNode(ECursorState.R_Click),
+                    new CursorStateNode(ECursorState.R_Click_CommandAwait),
+                    new CursorStateNode(ECursorState.R_DoubleClick),
+                    new CursorStateNode(ECursorState.R_DoubleClick_CommandAwait),
+                    new CursorStateNode(ECursorState.R_Hold)
                 };
 
                 _stateList.ForEach(delegate (CursorStateNode cs) { cs.MakeLinkInList(_stateList); });
@@ -182,17 +289,29 @@ namespace MyScripts.CursorControl
                 {
                     if (data == ECursorState.Normal)
                         foreach (CursorStateNode cs in list)
-                            if (/*cs.data == ECursorState.Click ||*/ cs.data == ECursorState.Click_CommandAwait || cs.data == ECursorState.Hold)
+                            if (/*cs.data == ECursorState.Click ||*/ cs.data == ECursorState.Click_CommandAwait || cs.data == ECursorState.Hold||cs.data==ECursorState.R_Click_CommandAwait||cs.data==ECursorState.R_Hold)
                                 reachable.Add(cs);
                     if (data == ECursorState.Click || data == ECursorState.Click_CommandAwait)
                         foreach (CursorStateNode cs in list)
-                            if (cs.data == ECursorState.Click || cs.data == ECursorState.DoubleClick_CommandAwait || cs.data == ECursorState.Normal)
+                            if (cs.data == ECursorState.Click || cs.data == ECursorState.DoubleClick_CommandAwait || cs.data == ECursorState.Normal||cs.data==ECursorState.R_Click_CommandAwait)
                                 reachable.Add(cs);
                     if (data == ECursorState.DoubleClick || data == ECursorState.DoubleClick_CommandAwait)
                         foreach (CursorStateNode cs in list)
-                            if (cs.data == ECursorState.DoubleClick || cs.data == ECursorState.Normal)
+                            if (cs.data == ECursorState.DoubleClick || cs.data == ECursorState.Normal||cs.data==ECursorState.R_Click_CommandAwait)
                                 reachable.Add(cs);
                     if (data == ECursorState.Hold)
+                        foreach (CursorStateNode cs in list)
+                            if (cs.data == ECursorState.Normal)
+                                reachable.Add(cs);
+                    if (data == ECursorState.R_Click || data == ECursorState.R_Click_CommandAwait)
+                        foreach (CursorStateNode cs in list)
+                            if (cs.data == ECursorState.R_Click || cs.data == ECursorState.R_DoubleClick_CommandAwait || cs.data == ECursorState.Normal||cs.data==ECursorState.Click_CommandAwait)
+                                reachable.Add(cs);
+                    if (data == ECursorState.R_DoubleClick || data == ECursorState.R_DoubleClick_CommandAwait)
+                        foreach (CursorStateNode cs in list)
+                            if (cs.data == ECursorState.R_DoubleClick || cs.data == ECursorState.Normal||cs.data==ECursorState.Click_CommandAwait)
+                                reachable.Add(cs);
+                    if (data == ECursorState.R_Hold)
                         foreach (CursorStateNode cs in list)
                             if (cs.data == ECursorState.Normal)
                                 reachable.Add(cs);
@@ -220,5 +339,10 @@ namespace MyScripts.CursorControl.State
         DoubleClick,
         DoubleClick_CommandAwait,
         Hold,
+        R_Click_CommandAwait,
+        R_Click,
+        R_DoubleClick_CommandAwait,
+        R_DoubleClick,
+        R_Hold,
     }
 }
