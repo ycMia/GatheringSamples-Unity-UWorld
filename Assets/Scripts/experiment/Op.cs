@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyScripts.Cursor;
 using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
 using MyScripts.Interactable.File;
-namespace Op
+namespace Opp
 {
     public class Op : FileOn
     {
