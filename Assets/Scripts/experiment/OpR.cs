@@ -10,17 +10,17 @@ using MyScripts.Logics.Tools;
 
 namespace MyScripts.Interactable.WindowComposite
 {
-    public class Op : FileOn , ICursorDoubleClickable
+    public class OpR : FileOn , IR_CursorDoubleClickable
     {
         public WindowFore targetWindow;
 
         private void Start()
         {
-            if (GetComponent<DoubleClickListener>() == null)
-                gameObject.AddComponent<DoubleClickListener>();
+            if (GetComponent<R_DoubleClickListener>() == null)
+                gameObject.AddComponent<R_DoubleClickListener>();
         }
 
-        public void OnDoubleClick()
+        public void OnR_DoubleClick()
         {
             foreach(GameObject obj in targetWindow.comb.objects)
             {

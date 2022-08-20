@@ -14,17 +14,18 @@ namespace MyScripts.Interactable.WindowComposite
 
         public void Start()
         {
-            AddObjectsInWindowRecursively(gameObject);
+            AddObjectsInWindowRecursively(comb, gameObject);
         }
-        private void AddObjectsInWindowRecursively(GameObject obj)
+        private static void AddObjectsInWindowRecursively(CombinedGameObjects comb, GameObject obj)
         {
             if (obj.transform.childCount == 0) return;
-            for (int i = 0; i < transform.childCount; i++)
+            for (int i = 0; i < obj.transform.childCount; i++)
             {
-                AddObjectsInWindowRecursively(obj);
-                comb.objects.Add(transform.GetChild(i).gameObject);
-                Debug.Log("Add :" + transform.GetChild(i).gameObject.name);
+                AddObjectsInWindowRecursively(comb, obj.transform.GetChild(i).gameObject);
+                comb.objects.Add(obj.transform.GetChild(i).gameObject);
+                Debug.Log("Add :" + obj.transform.GetChild(i).gameObject.name);
             }
         }
+
     }
 }

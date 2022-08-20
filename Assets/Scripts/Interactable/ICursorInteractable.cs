@@ -16,9 +16,17 @@ namespace MyScripts.Interactable
     {
         void OnSingleClick();
     }
+    public interface IR_CursorSingleClickable
+    {
+        void OnR_SingleClick();
+    }
     public interface ICursorDoubleClickable
     {
         void OnDoubleClick();
+    }
+    public interface IR_CursorDoubleClickable
+    {
+        void OnR_DoubleClick();
     }
     public interface ICursorHoverable
     {
