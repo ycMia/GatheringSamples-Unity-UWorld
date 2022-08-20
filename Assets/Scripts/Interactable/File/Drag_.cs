@@ -4,10 +4,9 @@ using UnityEngine;
 using MyScripts.Interactable.File;
 using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
-
 using MyScripts.Logics.StateMachine;
 
-namespace MyScripts.Experiments
+namespace MyScripts.Interactable.File
 {
     public class Drag_ : MonoBehaviour
     {

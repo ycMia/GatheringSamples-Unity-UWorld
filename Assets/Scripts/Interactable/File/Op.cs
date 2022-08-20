@@ -5,7 +5,7 @@ using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
 using MyScripts.Interactable.File;
-namespace Opp
+namespace MyScripts.Interactable.File
 {
     public class Op : FileOn
     {
@@ -13,7 +13,7 @@ namespace Opp
         public GameObject gameo2;
         void Update()
         {
-            Debug.Log("State machine :" + cursorStateMachine.GetState().ToString());
+            //Debug.Log("State machine :" + cursorStateMachine.GetState().ToString());
 
             if (stayState)
             {

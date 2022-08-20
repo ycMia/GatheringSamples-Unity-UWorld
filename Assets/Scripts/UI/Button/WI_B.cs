@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyScripts.Logics.Message;
 
-namespace W_B
+namespace MyScripts.UI.Button
 {
     public class WI_B : SimpleMessageSender<WIFI>
     {

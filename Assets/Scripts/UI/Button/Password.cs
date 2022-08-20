@@ -9,7 +9,7 @@ using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
 using System;
 
-namespace Password.a
+namespace MyScripts.UI.Button
 {
     public class Password : SimpleMessageSender<PasswordResult>
     {

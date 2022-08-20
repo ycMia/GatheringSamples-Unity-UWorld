@@ -6,7 +6,7 @@ using MyScripts.CursorControl;
 using MyScripts.CursorControl.State;
 using MyScripts.Logics.StateMachine;
 
-namespace Experiment.File
+namespace MyScripts.Interactable.File
 {
     public class File_Close : MonoBehaviour
     {

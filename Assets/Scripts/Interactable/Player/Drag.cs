@@ -7,7 +7,7 @@ using MyScripts.CursorControl.State;
 
 using MyScripts.Logics.StateMachine;
 
-namespace MyScripts.Experiment
+namespace MyScripts.Interactable.Player
 {
     public class Drag : MonoBehaviour
     {

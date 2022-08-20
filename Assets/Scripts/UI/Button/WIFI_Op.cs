@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-namespace W_O
+namespace MyScripts.UI.Button
 {
     public class WIFI_Op : MonoBehaviour
     {
